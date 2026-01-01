@@ -64,7 +64,7 @@ header {
 /* CONTENT */
 .content {
   display: none;
-  padding: 40px;
+  padding: 20px;
 }
 
 /* SYMBOL BUTTONS */
@@ -80,6 +80,16 @@ header {
 .symbol:hover {
   transform: scale(1.2);
   opacity: 0.8;
+}
+
+/* IFRAME */
+#iframe-container {
+  margin-top: 20px;
+  width: 90%;
+  height: 600px;
+  border: 3px solid #22c55e;
+  border-radius: 12px;
+  display: none;
 }
 
 /* LOADING SCREEN */
@@ -129,7 +139,8 @@ header {
 
 <!-- ALGEBRA -->
 <div id="algebra" class="content" style="display:block;">
-  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/retro-bowl')">+</div>
+  <!-- NEW GAME FOR + SIGN -->
+  <div class="symbol" onclick="loadGame('https://playtetris.org/')">+</div>
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/1v1-lol')">÷</div>
 </div>
 
@@ -144,9 +155,14 @@ header {
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/moto-x3m')">π</div>
 </div>
 
+<!-- IFRAME FOR IN-SITE GAMES -->
+<div id="iframe-container">
+  <iframe id="game-frame" src="" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+
 <!-- FAKE LOADING -->
 <div id="loading">
-  <h2>Loading questions…</h2>
+  <h2>Loading…</h2>
   <div class="loader"></div>
   <p>Please wait</p>
 </div>
@@ -171,14 +187,19 @@ function openTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).style.display = 'block';
   el.classList.add('active');
+  // hide iframe when switching tabs
+  document.getElementById("iframe-container").style.display = "none";
+  document.getElementById("game-frame").src = "";
 }
 
-/* GAME LOAD (FAKE) */
+/* LOAD GAME IN IFRAME WITH FAKE LOADING */
 function loadGame(url) {
   document.getElementById("loading").style.display = "block";
 
   redirectTimer = setTimeout(() => {
-    window.location.href = url;
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("iframe-container").style.display = "block";
+    document.getElementById("game-frame").src = url;
   }, 1800);
 }
 
