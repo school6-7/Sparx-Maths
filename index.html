@@ -39,7 +39,7 @@ button {
 header {
   background: #020617;
   padding: 20px;
-  font-size: 24px;
+  font-size: 26px;
   display: none;
 }
 
@@ -60,48 +60,46 @@ header {
 
 .content {
   display: none;
-  padding: 30px;
+  padding: 40px;
 }
 
-/* GAME ICONS */
-.game-icon {
-  width: 90px;
-  margin: 15px;
+/* SYMBOL BUTTONS */
+.symbol {
+  font-size: 90px;
+  margin: 25px;
   cursor: pointer;
+  display: inline-block;
+  user-select: none;
   transition: transform 0.2s, opacity 0.2s;
 }
 
-.game-icon:hover {
-  transform: scale(1.15);
+.symbol:hover {
+  transform: scale(1.2);
   opacity: 0.8;
 }
 
-/* FULLSCREEN GAME */
-#gameFrame {
+/* LOADING SCREEN */
+#loading {
   position: fixed;
   inset: 0;
   background: #020617;
   display: none;
   z-index: 9999;
+  padding-top: 120px;
 }
 
-#gameFrame iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
+.loader {
+  border: 6px solid #1e293b;
+  border-top: 6px solid #22c55e;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin: 30px auto;
+  animation: spin 1s linear infinite;
 }
 
-#gameFrame button {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  font-size: 18px;
-  border-radius: 6px;
-  cursor: pointer;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>
 </head>
@@ -116,7 +114,7 @@ header {
   <button onclick="unlock()">Submit</button>
 </div>
 
-<!-- MAIN SITE -->
+<!-- MAIN -->
 <header id="site">Sparx Maths</header>
 
 <div class="tabs" id="tabs">
@@ -128,44 +126,38 @@ header {
 <!-- ALGEBRA -->
 <div id="algebra" class="content" style="display:block;">
   <!-- ➕ Retro Bowl -->
-  <img class="game-icon" title="Addition"
-    src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Plus_symbol.svg"
-    onclick="openGame('https://sites.google.com/view/classroom6x/retro-bowl')">
+  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/retro-bowl')">+</div>
 
   <!-- ➗ 1v1.LOL -->
-  <img class="game-icon" title="Division"
-    src="https://upload.wikimedia.org/wikipedia/commons/9/9e/Division_sign.svg"
-    onclick="openGame('https://sites.google.com/view/classroom6x/1v1-lol')">
+  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/1v1-lol')">÷</div>
 </div>
 
 <!-- PRACTICE -->
 <div id="practice" class="content">
   <!-- ✖️ Slope -->
-  <img class="game-icon" title="Multiplication"
-    src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Multiplication_sign.svg"
-    onclick="openGame('https://sites.google.com/view/classroom6x/slope')">
+  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/slope')">×</div>
 
   <!-- √ Run 3 -->
-  <img class="game-icon" title="Square Root"
-    src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Square_root_symbol.svg"
-    onclick="openGame('https://sites.google.com/view/classroom6x/run-3')">
+  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/run-3')">√</div>
 </div>
 
 <!-- SIGMA -->
 <div id="sigma" class="content">
   <!-- π Moto X3M -->
-  <img class="game-icon" title="Pi"
-    src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Pi-symbol.svg"
-    onclick="openGame('https://sites.google.com/view/classroom6x/moto-x3m')">
+  <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/moto-x3m')">π</div>
 </div>
 
-<!-- FULLSCREEN GAME -->
-<div id="gameFrame">
-  <button onclick="panic()">✕</button>
-  <iframe id="iframe"></iframe>
+<!-- FAKE LOADING -->
+<div id="loading">
+  <h2>Loading questions…</h2>
+  <div class="loader"></div>
+  <p>Please wait</p>
 </div>
 
 <script>
+let redirectTimer = null;
+
+/* LOGIN */
 function unlock() {
   if (document.getElementById("password").value === "sparx") {
     document.getElementById("login").style.display = "none";
@@ -176,6 +168,7 @@ function unlock() {
   }
 }
 
+/* TABS */
 function openTab(id, el) {
   document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -183,14 +176,19 @@ function openTab(id, el) {
   el.classList.add('active');
 }
 
-function openGame(url) {
-  document.getElementById("iframe").src = url;
-  document.getElementById("gameFrame").style.display = "block";
+/* GAME LOAD (FAKE) */
+function loadGame(url) {
+  document.getElementById("loading").style.display = "block";
+
+  redirectTimer = setTimeout(() => {
+    window.location.href = url;
+  }, 1800);
 }
 
+/* PANIC */
 function panic() {
-  document.getElementById("iframe").src = "";
-  document.getElementById("gameFrame").style.display = "none";
+  clearTimeout(redirectTimer);
+  document.getElementById("loading").style.display = "none";
 
   document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
   document.getElementById("algebra").style.display = "block";
@@ -199,11 +197,16 @@ function panic() {
   document.querySelector('.tab').classList.add('active');
 }
 
-/* ENTER KEY = PANIC */
+/* ENTER = PANIC (ONLY DURING LOADING) */
 document.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
+  if (e.key === "Enter" && document.getElementById("loading").style.display === "block") {
     panic();
   }
+});
+
+/* ENTER SUBMITS PASSWORD */
+document.getElementById("password").addEventListener("keydown", e => {
+  if (e.key === "Enter") unlock();
 });
 </script>
 
