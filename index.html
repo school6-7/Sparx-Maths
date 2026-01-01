@@ -5,6 +5,7 @@
 <title>Sparx Maths</title>
 
 <style>
+/* BASIC STYLES */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -13,6 +14,7 @@ body {
   text-align: center;
 }
 
+/* LOGIN BOX */
 .box {
   background: #020617;
   width: 320px;
@@ -36,6 +38,7 @@ button {
   cursor: pointer;
 }
 
+/* HEADER & TABS */
 header {
   background: #020617;
   padding: 20px;
@@ -58,6 +61,7 @@ header {
   border-bottom: 3px solid #22c55e;
 }
 
+/* CONTENT */
 .content {
   display: none;
   padding: 40px;
@@ -125,25 +129,18 @@ header {
 
 <!-- ALGEBRA -->
 <div id="algebra" class="content" style="display:block;">
-  <!-- ➕ Retro Bowl -->
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/retro-bowl')">+</div>
-
-  <!-- ➗ 1v1.LOL -->
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/1v1-lol')">÷</div>
 </div>
 
 <!-- PRACTICE -->
 <div id="practice" class="content">
-  <!-- ✖️ Slope -->
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/slope')">×</div>
-
-  <!-- √ Run 3 -->
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/run-3')">√</div>
 </div>
 
 <!-- SIGMA -->
 <div id="sigma" class="content">
-  <!-- π Moto X3M -->
   <div class="symbol" onclick="loadGame('https://sites.google.com/view/classroom6x/moto-x3m')">π</div>
 </div>
 
@@ -185,28 +182,25 @@ function loadGame(url) {
   }, 1800);
 }
 
-/* PANIC */
+/* PANIC / REDIRECT TO SPARX MATHS */
 function panic() {
-  clearTimeout(redirectTimer);
-  document.getElementById("loading").style.display = "none";
-
-  document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
-  document.getElementById("algebra").style.display = "block";
-
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('.tab').classList.add('active');
+  window.location.href = "https://www.sparxmaths.uk/";
 }
-
-/* ENTER = PANIC (ONLY DURING LOADING) */
-document.addEventListener("keydown", e => {
-  if (e.key === "Enter" && document.getElementById("loading").style.display === "block") {
-    panic();
-  }
-});
 
 /* ENTER SUBMITS PASSWORD */
 document.getElementById("password").addEventListener("keydown", e => {
   if (e.key === "Enter") unlock();
+});
+
+/* KEYBOARD SHORTCUTS */
+document.addEventListener("keydown", e => {
+  if (e.key.toLowerCase() === "x") { // pressing 'x'
+    panic();
+  }
+  if (e.key === "Enter" && document.getElementById("loading").style.display === "block") {
+    clearTimeout(redirectTimer);
+    document.getElementById("loading").style.display = "none";
+  }
 });
 </script>
 
